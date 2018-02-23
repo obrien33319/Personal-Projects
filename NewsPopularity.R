@@ -1,6 +1,6 @@
+#Dataset is the Online News Popularity from the UCI repository
 
 #Import packages
-
 library("readr", lib.loc="~/R/win-library/3.4")
 library("caret", lib.loc="~/R/win-library/3.4")
 library("corrplot", lib.loc="~/R/win-library/3.4")
