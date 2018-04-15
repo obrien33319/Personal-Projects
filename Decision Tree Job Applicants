@@ -61,7 +61,7 @@ table(train_app$Outcome, train_pred)
 ## Predict the outcome of the test data
 pre_score = predict(main_tree, test_app, type = "vector")
 
-## View the confusion matrix of the model
+## View the confusion matrix of the test prediction
 table(test_app$Outcome, pre_score)
 ## 56.4% accuracy
 
