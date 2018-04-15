@@ -1,0 +1,75 @@
+
+
+#################################### Job Applicants Decision Trees #################################################
+
+##Load library
+library(readxl)
+library(rpart)
+library(rpart.plot)
+library(caret)
+library(e1071)
+library(Metrics)
+
+##Import data
+applicants = read_excel('JobRaw.xls')
+
+##Inspect data table
+head(applicants)
+### Columns 7 and 8 are empty and needs to be removed
+
+## Remove columns 7 & 8
+applicants = applicants[-8]
+applicants = applicants[-7]
+
+## Inspect data for missing values and anomalies
+summary(applicants)
+## The max of experience seems high in relation to the median and 3rd quartile, check for outliers
+boxplot(applicants$Experience)
+### There are in fact 2 outliers at 15 and 14
+### May consider removing at a later time
+
+## Separate data into training and test sets
+train_app = applicants[1:250,]
+test_app = applicants[251:500,]
+
+
+
+## Setting tree control parameters
+fitControl = trainControl(method = "cv", number = 5)
+cartGrid = expand.grid(.cp=(1:50)*0.01)
+
+## Creating the decision tree model
+tree_model = train(Outcome ~ ., data = train_app, method = "rpart", trControl = fitControl, tuneGrid = cartGrid)
+
+## Getting the complexity parameter (cp) of the model
+print(tree_model)
+## complexity parameter = .01
+
+## Build decision tree using the .01 cp
+main_tree = rpart(Outcome ~ ., data = train_app, control = rpart.control(cp=0.01))
+
+## View display of the decision tree
+prp(main_tree)
+
+## Predict outcome of the training data
+train_pred = predict(main_tree, train_app, type = "vector")
+
+## View the confusion matrix of the training prediction
+table(train_app$Outcome, train_pred)
+## 76% accuracy
+
+## Predict the outcome of the test data
+pre_score = predict(main_tree, test_app, type = "vector")
+
+## View the confusion matrix of the model
+table(test_app$Outcome, pre_score)
+## 56.4% accuracy
+
+
+
+
+
+
+
+
+
